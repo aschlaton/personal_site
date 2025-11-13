@@ -1,0 +1,95 @@
+---
+export interface Props {
+  filepath: string;
+}
+
+const { filepath } = Astro.props;
+
+// Parse filepath into segments
+// e.g., "~/blog/post" -> ["blog", "post"] (excluding ~)
+const pathParts = filepath.split('/').filter(Boolean).slice(1);
+const isHome = filepath === "~/";
+---
+
+<nav class="breadcrumb">
+  {/* Always show ~/ at the start */}
+  {isHome ? (
+    <>
+      <span class="symbol">~</span>
+      <span class="filepath">/</span>
+    </>
+  ) : (
+    <>
+      <a href="/" class="filepath-link">
+        <span class="symbol">~</span>
+      </a>
+      <span class="filepath"> / </span>
+    </>
+  )}
+
+  {/* Show remaining path segments */}
+  {pathParts.map((segment, index) => {
+    const isLast = index === pathParts.length - 1;
+    const path = "/" + pathParts.slice(0, index + 1).join('/');
+
+    return (
+      <>
+        {isLast ? (
+          <span class="filepath">{segment}</span>
+        ) : (
+          <>
+            <a href={path} class="filepath-link">
+              <span class="filepath">{segment}</span>
+            </a>
+            <span class="filepath"> / </span>
+          </>
+        )}
+      </>
+    );
+  })}
+</nav>
+
+<style>
+  .breadcrumb {
+    position: fixed;
+    top: 32px;
+    left: calc(var(--layout-margin) + 36px);
+    font-size: 1rem;
+    color: var(--color-fg);
+    z-index: 100;
+    font-family: var(--font-family);
+  }
+
+  .filepath {
+    color: var(--color-fg);
+    opacity: 0.8;
+    font-size: 1.0rem;
+    vertical-align: baseline;
+  }
+
+  .filepath-link {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .filepath-link:hover {
+    text-decoration: underline;
+  }
+
+  .filepath-link .filepath,
+  .filepath-link .symbol {
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  .filepath-link:hover .filepath,
+  .filepath-link:hover .symbol {
+    opacity: 1;
+  }
+
+  .symbol {
+    font-size: 1.0rem;
+    vertical-align: baseline;
+  }
+
+</style>

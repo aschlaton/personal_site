@@ -1,0 +1,35 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+import BulletList from "../components/BulletList.astro";
+---
+
+<PageLayout title="Things I Don't Like" subtitle="I don't like these things." filepath="~/dislikes">
+
+  <p>There's way too much positivity in the world out there, so I thought I'd list some things I don't like.</p>
+
+  <BulletList collapsible>
+    <li class="has-children">Annoying Sounds
+      <ul class="arrow-list">
+        <li>Chewing with mouth open</li>
+        <li>Loud typing</li>
+        <li>Car alarms</li>
+        <li>Leaf blowers</li>
+      </ul>
+    </li>
+    <li class="has-children">Bad UX Patterns
+      <ul class="arrow-list">
+        <li>Popups on page load</li>
+        <li>Autoplay videos</li>
+        <li>Infinite scroll without pagination</li>
+        <li>Disabled copy/paste</li>
+      </ul>
+    </li>
+    <li class="has-children">Weather
+      <ul class="arrow-list">
+        <li>Extreme humidity</li>
+        <li>Unexpected rain</li>
+        <li>Too hot summers</li>
+      </ul>
+    </li>
+  </BulletList>
+</PageLayout>

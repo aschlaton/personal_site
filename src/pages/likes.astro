@@ -1,0 +1,140 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+import BulletList from "../components/BulletList.astro";
+---
+
+<PageLayout title="Things I Like" subtitle="I like these things." filepath="~/likes">
+  <BulletList collapsible>
+    <li class="has-children">Movies
+      <ul class="arrow-list">
+        <li class="has-children">Drama
+          <ul class="arrow-list">
+            <li>1917</li>
+            <li>Asteroid City</li>
+            <li>Small Things Like These</li>
+            <li>The Shawshank Redemption</li>
+            <li>Parasite</li>
+            <li>Moonlight</li>
+            <li>Manchester by the Sea</li>
+            <li>Arrival</li>
+            <li>There Will Be Blood</li>
+            <li>No Country for Old Men</li>
+          </ul>
+        </li>
+        <li class="has-children">Sci-Fi
+          <ul class="arrow-list">
+            <li>Blade Runner 2049</li>
+            <li>Interstellar</li>
+            <li>The Matrix</li>
+            <li>Ex Machina</li>
+            <li>Inception</li>
+            <li>Her</li>
+            <li>Annihilation</li>
+            <li>Dune</li>
+            <li>2001: A Space Odyssey</li>
+          </ul>
+        </li>
+        <li class="has-children">Comedy
+          <ul class="arrow-list">
+            <li>The Grand Budapest Hotel</li>
+            <li>In Bruges</li>
+            <li>Groundhog Day</li>
+            <li>Burn After Reading</li>
+            <li>The Big Lebowski</li>
+            <li>Knives Out</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li class="has-children">Books
+      <ul class="arrow-list">
+        <li class="has-children">Fiction
+          <ul class="arrow-list">
+            <li>The Road - Cormac McCarthy</li>
+            <li>1984 - George Orwell</li>
+            <li>Beloved - Toni Morrison</li>
+            <li>Infinite Jest - David Foster Wallace</li>
+            <li>The Goldfinch - Donna Tartt</li>
+            <li>Never Let Me Go - Kazuo Ishiguro</li>
+            <li>Station Eleven - Emily St. John Mandel</li>
+            <li>The Amazing Adventures of Kavalier & Clay - Michael Chabon</li>
+          </ul>
+        </li>
+        <li class="has-children">Non-Fiction
+          <ul class="arrow-list">
+            <li>Sapiens - Yuval Noah Harari</li>
+            <li>Educated - Tara Westover</li>
+            <li>Thinking, Fast and Slow - Daniel Kahneman</li>
+            <li>The Sixth Extinction - Elizabeth Kolbert</li>
+            <li>Guns, Germs, and Steel - Jared Diamond</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li class="has-children">Music
+      <ul class="arrow-list">
+        <li class="has-children">Artists
+          <ul class="arrow-list">
+            <li>Radiohead</li>
+            <li>Bon Iver</li>
+            <li>Sufjan Stevens</li>
+            <li>Fleet Foxes</li>
+            <li>The National</li>
+            <li>Arcade Fire</li>
+            <li>Modest Mouse</li>
+            <li>LCD Soundsystem</li>
+            <li>Phoebe Bridgers</li>
+            <li>Death Cab for Cutie</li>
+            <li>Sigur Rós</li>
+            <li>Vampire Weekend</li>
+          </ul>
+        </li>
+        <li class="has-children">Albums
+          <ul class="arrow-list">
+            <li>In Rainbows - Radiohead</li>
+            <li>For Emma, Forever Ago - Bon Iver</li>
+            <li>Illinois - Sufjan Stevens</li>
+            <li>Funeral - Arcade Fire</li>
+            <li>Sound of Silver - LCD Soundsystem</li>
+            <li>The Moon & Antarctica - Modest Mouse</li>
+            <li>Helplessness Blues - Fleet Foxes</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li class="has-children">Food & Drink
+      <ul class="arrow-list">
+        <li class="has-children">Cuisines
+          <ul class="arrow-list">
+            <li>Japanese</li>
+            <li>Italian</li>
+            <li>Thai</li>
+            <li>Vietnamese</li>
+            <li>Indian</li>
+            <li>Mexican</li>
+            <li>Ethiopian</li>
+          </ul>
+        </li>
+        <li class="has-children">Coffee
+          <ul class="arrow-list">
+            <li>Single origin pour over</li>
+            <li>Espresso</li>
+            <li>Cold brew</li>
+            <li>Cortado</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li class="has-children">Hobbies
+      <ul class="arrow-list">
+        <li>Photography</li>
+        <li>Reading</li>
+        <li>Hiking</li>
+        <li>Cooking</li>
+        <li>Chess</li>
+        <li>Programming</li>
+        <li>Writing</li>
+      </ul>
+    </li>
+  </BulletList>
+</PageLayout>

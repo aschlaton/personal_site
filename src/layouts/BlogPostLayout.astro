@@ -1,0 +1,84 @@
+---
+import PageLayout from "./PageLayout.astro";
+
+export interface Props {
+  frontmatter: {
+    title: string;
+    date: string;
+    description: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+---
+
+<PageLayout title={frontmatter.title} subtitle={frontmatter.date} filepath={`~/blog/${Astro.url.pathname.split('/').pop()}`}>
+  <article class="blog-post">
+    <slot />
+  </article>
+</PageLayout>
+
+<style>
+  .blog-post :global(h1) {
+    font-size: 1.5rem;
+    margin: 1em 0 0.5em 0;
+  }
+
+  .blog-post :global(h2) {
+    font-size: 1.25rem;
+    margin: 1em 0 0.5em 0;
+  }
+
+  .blog-post :global(h3) {
+    font-size: 1.1rem;
+    margin: 1em 0 0.5em 0;
+  }
+
+  .blog-post :global(p) {
+    margin: 0.75em 0;
+  }
+
+  .blog-post :global(ul), .blog-post :global(ol) {
+    margin: 0.75em 0;
+    padding-left: 1.5em;
+  }
+
+  .blog-post :global(li) {
+    margin: 0.25em 0;
+  }
+
+  .blog-post :global(code) {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+
+  .blog-post :global(pre) {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+
+  .blog-post :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .blog-post :global(blockquote) {
+    border-left: 3px solid var(--color-fg);
+    padding-left: 1em;
+    margin: 1em 0;
+    opacity: 0.8;
+  }
+
+  .blog-post :global(a) {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .blog-post :global(a:hover) {
+    text-decoration: underline;
+  }
+</style>

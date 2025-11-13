@@ -1,0 +1,64 @@
+---
+export interface Props {
+  title: string;
+  date: string;
+  slug: string;
+  description: string;
+}
+
+const { title, date, slug, description } = Astro.props;
+---
+
+<a href={`/blog/${slug}`} class="blog-post-card">
+  <div class="post-header">
+    <h3 class="post-title">{title}</h3>
+    <span class="post-date">{date}</span>
+  </div>
+  <p class="post-description">{description}</p>
+</a>
+
+<style>
+  .blog-post-card {
+    display: block;
+    text-decoration: none;
+    color: var(--color-fg);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-fg);
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+
+  .blog-post-card:hover {
+    opacity: 1;
+  }
+
+  .blog-post-card:last-child {
+    border-bottom: none;
+  }
+
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .post-title {
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-normal);
+    margin: 0;
+    flex: 1;
+  }
+
+  .post-date {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  .post-description {
+    margin: 4px 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+</style>

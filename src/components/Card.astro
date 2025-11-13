@@ -1,0 +1,28 @@
+---
+export interface Props { corners?: string }
+const { corners = "" } = Astro.props;
+
+const cornerList = corners.split(' ').filter(Boolean);
+const hasTL = cornerList.includes('tl');
+const hasTR = cornerList.includes('tr');
+const hasBL = cornerList.includes('bl');
+const hasBR = cornerList.includes('br');
+---
+<article class="card">
+  <slot />
+  {hasTL && <span class="corner-tl"></span>}
+  {hasTR && <span class="corner-tr"></span>}
+  {hasBL && <span class="corner-bl"></span>}
+  {hasBR && <span class="corner-br"></span>}
+</article>
+
+<style>
+  .card { border: none; padding: 36px; background: var(--color-bg); color: var(--color-fg); min-height: 22vh; height: 22vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+  .corner-tl { position: absolute; top: 0; left: 0; width: 50px; height: 50px; border-top: 1.25px solid var(--color-fg); border-left: 1.25px solid var(--color-fg); pointer-events: none; }
+  .corner-tr { position: absolute; top: 0; right: 0; width: 50px; height: 50px; border-top: 1.25px solid var(--color-fg); border-right: 1.25px solid var(--color-fg); pointer-events: none; }
+  .corner-bl { position: absolute; bottom: 0; left: 0; width: 50px; height: 50px; border-bottom: 1.25px solid var(--color-fg); border-left: 1.25px solid var(--color-fg); pointer-events: none; }
+  .corner-br { position: absolute; bottom: 0; right: 0; width: 50px; height: 50px; border-bottom: 1.25px solid var(--color-fg); border-right: 1.25px solid var(--color-fg); pointer-events: none; }
+
+</style>
+

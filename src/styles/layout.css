@@ -1,0 +1,15 @@
+:root {
+  --layout-margin: calc(50vw - 18vw - 18px);
+  --card-width: 18vw;
+  --card-height: 22vh;
+  --page-top: calc(50vh - 22vh - 50px);
+  --page-bottom: calc(14vh + 36px);
+}
+
+@media (max-width: 900px) {
+  :root {
+    --card-width: max(18vw, 120px);
+    --layout-margin: calc(50vw - var(--card-width) - 18px);
+    --card-height: min(22vh, var(--card-width));
+  }
+}

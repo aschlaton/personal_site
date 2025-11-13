@@ -1,0 +1,23 @@
+:root {
+  --font-family: Garamond, "Times New Roman", Times, serif;
+  --font-size-title: 1.5rem;
+  --font-size-subtitle: 0.9rem;
+  --font-size-body: 1rem;
+  --font-weight-normal: 300;
+  --font-weight-bold: 700;
+  --line-height-title: 1.2;
+  --line-height-body: 1.5;
+}
+
+.card-title {
+  margin: 0 0 6px;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-title);
+}
+
+.card-body {
+  margin: 0 0 6px;
+  font-size: var(--font-size-subtitle);
+  opacity: 0.7;
+}

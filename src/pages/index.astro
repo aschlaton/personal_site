@@ -1,0 +1,259 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "../styles/colors.css";
+import "../styles/fonts.css";
+import "../styles/layout.css";
+import IntroCard from "../components/home/IntroCard.astro";
+import CardTwo from "../components/home/CardTwo.astro";
+import CardThree from "../components/home/CardThree.astro";
+import CardFour from "../components/home/CardFour.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
+import spriteConstants from "../utils/spriteConstants.js?raw";
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Minimal Cards</title>
+    <ClientRouter fallback="none" />
+    <script is:inline set:html={spriteConstants}></script>
+    <script is:inline set:html={restoreDarkMode}></script>
+    <style>
+      :root { color-scheme: light; }
+      html, body { height: 100%; margin: 0; background: var(--color-bg); color: var(--color-fg); overflow: hidden; touch-action: manipulation; }
+      * { user-select: none; -webkit-user-select: none; -moz-user-select: none; }
+      body { min-height: 100vh; display: grid; place-items: center; font-family: var(--font-family); }
+      main { display: grid; grid-template-columns: repeat(2, var(--card-width)); gap: 36px; padding: 32px; width: 80vw; margin: 0 auto; justify-content: center; position: relative; }
+      /* .center-image { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; z-index: 1000; cursor: pointer; view-transition-name: none; } */
+      @media (max-width: 900px) {
+        :global(.card) { min-height: var(--card-height) !important; height: var(--card-height) !important; padding: 24px 12px; justify-content: center; align-items: center; overflow: hidden; position: relative; }
+        :global(.card-title) { font-size: 1rem; margin: 0; white-space: nowrap; transition: transform 0.3s ease; }
+        :global(.card-body), :global(.arrow-list) { position: absolute; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; transform: translateY(20px); pointer-events: none; }
+
+        @media (hover: hover) {
+          :global(.card:hover) { padding-left: 12px; padding-right: 12px; }
+          :global(.card:hover .card-title) { transform: translateY(-100%); opacity: 0; }
+          :global(.card:hover .card-body), :global(.card:hover .arrow-list) { opacity: 1; transform: translateY(0); position: static; pointer-events: auto; }
+        }
+
+        @media (hover: none) {
+          :global(.card) { cursor: pointer; }
+          :global(.card.expanded) { padding-left: 12px; padding-right: 12px; }
+          :global(.card.expanded .card-title) { transform: translateY(-100%); opacity: 0; }
+          :global(.card.expanded .card-body), :global(.card.expanded .arrow-list) { opacity: 1; transform: translateY(0); position: static; pointer-events: auto; }
+        }
+      }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    </style>
+  </head>
+  <body>
+    <Breadcrumb filepath="~/" />
+    <!-- <canvas class="center-image" id="sprite-canvas" width="64" height="64"></canvas> -->
+    <main>
+      <h1 class="sr-only">Cards</h1>
+      <IntroCard />
+      <CardTwo />
+      <CardThree />
+      <CardFour />
+    </main>
+    <script>
+      function initHomeSprite() {
+        // Restore dark mode progress from sessionStorage, default to dark mode
+        const maxScroll = (TOTAL_FRAMES - 1) * SCROLL_PER_FRAME;
+        let scrollAccumulator = parseFloat(String(sessionStorage.getItem('darkModeProgress') ?? maxScroll));
+
+        const canvasEl = document.getElementById('home-sprite-canvas');
+        if (!(canvasEl instanceof HTMLCanvasElement)) {
+          return;
+        }
+
+        // Prevent double initialization
+        if (canvasEl.dataset.initialized === '1') return;
+        canvasEl.dataset.initialized = '1';
+
+        const canvas = canvasEl;
+        const ctx = canvas.getContext('2d', { alpha: true });
+        if (!ctx) return;
+
+        // Disable smoothing for crisp pixel art when scaling
+        ctx.imageSmoothingEnabled = false;
+
+        // Extract color values from CSS variables
+        function hexToGrayscale(hex) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          return result ? parseInt(result[1], 16) : 255;
+        }
+
+        const whiteHex = getComputedStyle(document.documentElement).getPropertyValue('--color-white').trim();
+        const blackHex = getComputedStyle(document.documentElement).getPropertyValue('--color-black').trim();
+        const linkLightHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-light').trim();
+        const linkDarkHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-dark').trim();
+
+        const WHITE_RGB = hexToGrayscale(whiteHex);
+        const BLACK_RGB = hexToGrayscale(blackHex);
+
+        function hexToRgbValues(hex) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+          } : { r: 255, g: 255, b: 255 };
+        }
+
+        const LINK_LIGHT_RGB = hexToRgbValues(linkLightHex);
+        const LINK_DARK_RGB = hexToRgbValues(linkDarkHex);
+
+        // Load sprite sheet as ImageBitmap
+        let spriteBitmap;
+        const img = new Image();
+        img.src = '/assets/sprite_sheet.png';
+        img.onload = async () => {
+          spriteBitmap = await createImageBitmap(img);
+          updateFrame();
+        };
+
+        function updateFrame() {
+          if (!spriteBitmap || !ctx) return;
+
+          // Clamp frameIndex between 0 and TOTAL_FRAMES - 1
+          const rawFrame = Math.floor(scrollAccumulator / SCROLL_PER_FRAME);
+          const frameIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, rawFrame));
+
+          const row = Math.floor(frameIndex / FRAMES_PER_ROW);
+          const col = frameIndex % FRAMES_PER_ROW;
+
+          // Draw the specific frame from sprite sheet
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(
+            spriteBitmap,
+            col * FRAME_WIDTH, row * FRAME_HEIGHT, // source x, y
+            FRAME_WIDTH, FRAME_HEIGHT, // source width, height
+            0, 0, // dest x, y
+            canvas.width, canvas.height // dest width, height
+          );
+
+          // Calculate color transition based on frame
+          // Frame 0 = light, Frame 71 (last) = dark
+          const progress = frameIndex / (TOTAL_FRAMES - 1);
+
+          // Interpolate colors
+          // Background: white to dark gray
+          // Foreground: dark gray to white
+          const bgColor = interpolateColor(WHITE_RGB, BLACK_RGB, progress);
+          const fgColor = interpolateColor(BLACK_RGB, WHITE_RGB, progress);
+
+          // Link color: light blue-purple to white
+          const linkR = interpolateColor(LINK_LIGHT_RGB.r, LINK_DARK_RGB.r, progress);
+          const linkG = interpolateColor(LINK_LIGHT_RGB.g, LINK_DARK_RGB.g, progress);
+          const linkB = interpolateColor(LINK_LIGHT_RGB.b, LINK_DARK_RGB.b, progress);
+
+          document.documentElement.style.setProperty('--color-bg', `rgb(${bgColor}, ${bgColor}, ${bgColor})`);
+          document.documentElement.style.setProperty('--color-fg', `rgb(${fgColor}, ${fgColor}, ${fgColor})`);
+          document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
+        }
+
+        function interpolateColor(start, end, progress) {
+          return Math.round(start + (end - start) * progress);
+        }
+
+        let rafId;
+
+        window.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          // Invert scroll direction: scroll down decreases, scroll up increases
+          scrollAccumulator -= e.deltaY;
+
+          // Clamp scroll accumulator to valid range
+          scrollAccumulator = Math.max(0, Math.min(maxScroll, scrollAccumulator));
+
+          // Save to sessionStorage
+          sessionStorage.setItem('darkModeProgress', scrollAccumulator.toString());
+
+          // Use requestAnimationFrame to throttle updates
+          if (rafId === undefined) {
+            rafId = requestAnimationFrame(() => {
+              updateFrame();
+              rafId = undefined;
+            });
+          }
+        }, { passive: false });
+
+        canvas.addEventListener('click', () => {
+          const currentFrame = Math.floor(scrollAccumulator / SCROLL_PER_FRAME);
+          const midpoint = (TOTAL_FRAMES - 1) / 2;
+
+          // Determine which end is furthest
+          const targetFrame = currentFrame < midpoint ? TOTAL_FRAMES - 1 : 0;
+          const targetScroll = targetFrame * SCROLL_PER_FRAME;
+
+          // Animate to target
+          const startScroll = scrollAccumulator;
+          const duration = 400; // ms
+          const startTime = Date.now();
+
+          function animate() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Ease in-out
+            const easeProgress = progress < 0.5
+              ? 2 * progress * progress
+              : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+            scrollAccumulator = startScroll + (targetScroll - startScroll) * easeProgress;
+            updateFrame();
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              // Save final state
+              sessionStorage.setItem('darkModeProgress', scrollAccumulator.toString());
+            }
+          }
+
+          animate();
+        });
+      }
+
+      function setupMobileCards() {
+        // Handle card tap for mobile devices
+        const isTouchDevice = window.matchMedia('(hover: none)').matches;
+        const isMobileWidth = window.matchMedia('(max-width: 900px)').matches;
+
+        if (isTouchDevice && isMobileWidth) {
+          document.querySelectorAll('.card').forEach(card => {
+            // Prevent double initialization
+            if (card.dataset.mobileInit === '1') return;
+            card.dataset.mobileInit = '1';
+
+            card.addEventListener('click', (e) => {
+              const target = e.target;
+              if (target && target instanceof HTMLElement && target.tagName === 'A') return;
+              card.classList.toggle('expanded');
+            });
+          });
+        }
+      }
+
+      // Initialize on first load and after every page swap
+      initHomeSprite();
+      setupMobileCards();
+      document.addEventListener('astro:after-swap', () => {
+        // Clear initialization flags before re-initializing
+        const canvasEl = document.getElementById('home-sprite-canvas');
+        if (canvasEl instanceof HTMLCanvasElement) {
+          canvasEl.dataset.initialized = '0';
+        }
+        document.querySelectorAll('.card').forEach(card => {
+          card.dataset.mobileInit = '0';
+        });
+
+        initHomeSprite();
+        setupMobileCards();
+      });
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,425 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "../styles/colors.css";
+import "../styles/fonts.css";
+import "../styles/layout.css";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
+import spriteConstants from "../utils/spriteConstants.js?raw";
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  filepath: string;
+}
+
+const { title, subtitle, filepath } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>{title}</title>
+    <ClientRouter fallback="none" />
+    <script is:inline set:html={spriteConstants}></script>
+    <script is:inline set:html={restoreDarkMode}></script>
+    <style>
+      :root { color-scheme: light; }
+      html, body { height: 100%; margin: 0; background: var(--color-bg); color: var(--color-fg); overflow: hidden; touch-action: manipulation; }
+      body { min-height: 100vh; font-family: var(--font-family); }
+
+      .page-container {
+        margin-left: var(--layout-margin);
+        margin-right: var(--layout-margin);
+        max-width: calc(2 * var(--card-width) + 36px);
+        margin-top: var(--page-top);
+        height: calc(100vh - var(--page-top) - var(--page-bottom));
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .page-header {
+        background: var(--color-bg);
+        flex-shrink: 0;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-bottom: 12px;
+        padding-right: 36px;
+      }
+
+      .header-text {
+        flex: 1;
+        padding-left: 36px;
+      }
+
+      .divider {
+        border-bottom: 1px solid var(--color-fg);
+        margin-left: 36px;
+        margin-right: 36px;
+      }
+
+      h1 {
+        font-size: var(--font-size-title);
+        font-weight: var(--font-weight-normal);
+        margin: 0;
+      }
+
+      .header-text .card-body {
+        margin-top: 12px;
+      }
+
+      .page-body {
+        padding-top: 12px;
+        padding-left: 36px;
+        padding-right: 36px;
+        font-size: var(--font-size-body);
+        line-height: var(--line-height-body);
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+        min-height: 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .page-body::-webkit-scrollbar {
+        display: none;
+      }
+
+      .page-container::before,
+      .page-container::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 60px;
+        pointer-events: none;
+        opacity: 1;
+        z-index: 20;
+      }
+
+      .page-container::before {
+        top: calc(var(--font-size-title) + 12px + var(--font-size-subtitle) + 12px + 1px);
+        background: linear-gradient(to bottom, var(--color-bg), transparent);
+      }
+
+      .page-container::after {
+        bottom: 0;
+        background: linear-gradient(to top, var(--color-bg), transparent);
+      }
+
+      .page-container.no-scroll-top::before {
+        opacity: 0;
+      }
+
+      .page-container.no-scroll-bottom::after {
+        opacity: 0;
+      }
+
+      .page-body :global(p) {
+        margin: 0;
+      }
+
+      .page-body :global(ul) {
+        margin: 0;
+      }
+
+      .right-image {
+        width: 64px !important;
+        height: 64px !important;
+        max-width: 64px;
+        max-height: 64px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      #header-sprite-canvas { view-transition-name: none; }
+    </style>
+  </head>
+  <body>
+    <Breadcrumb filepath={filepath} />
+    <div class="page-container" id="page-container">
+      <div class="page-header">
+        <div class="header-content">
+          <div class="header-text">
+            <h1>{title}</h1>
+            {subtitle && <p class="card-body">{subtitle}</p>}
+          </div>
+          <canvas class="right-image" id="header-sprite-canvas" width="64" height="64"></canvas>
+        </div>
+        <div class="divider"></div>
+      </div>
+      <div class="page-body" id="page-body">
+        <slot />
+      </div>
+    </div>
+    <script>
+      function initPageLayout() {
+        const pageBody = document.getElementById('page-body');
+        const pageContainer = document.getElementById('page-container');
+        if (!(pageBody instanceof HTMLElement && pageContainer instanceof HTMLElement)) return;
+
+        // Prevent double initialization
+        if (pageBody.dataset.layoutInit === '1') return;
+        pageBody.dataset.layoutInit = '1';
+
+        const bodyEl = pageBody;
+        const containerEl = pageContainer;
+        function updateScrollFades() {
+          const { scrollTop, scrollHeight, clientHeight } = bodyEl;
+          const hasScrollTop = scrollTop > 0;
+          const hasScrollBottom = scrollTop + clientHeight < scrollHeight - 1;
+
+          containerEl.classList.toggle('no-scroll-top', !hasScrollTop);
+          containerEl.classList.toggle('no-scroll-bottom', !hasScrollBottom);
+        }
+
+        bodyEl.addEventListener('scroll', updateScrollFades);
+
+        // Run immediately and after paint to ensure gradient appears without delay
+        updateScrollFades();
+        requestAnimationFrame(() => updateScrollFades());
+
+        // Watch for DOM changes (like expanding bullets) and update fades
+        const observer = new MutationObserver(updateScrollFades);
+        observer.observe(bodyEl, { childList: true, subtree: true, attributes: true });
+
+        // Only prevent wheel events on page-body from bubbling up if content is scrollable
+        bodyEl.addEventListener('wheel', (e) => {
+          const { scrollHeight, clientHeight } = bodyEl;
+          const hasScrollableContent = scrollHeight > clientHeight;
+
+          if (hasScrollableContent) {
+            e.stopPropagation();
+          }
+          // Otherwise let it bubble up to trigger dark mode changes
+        });
+
+        // Dark mode scroll handling
+        const maxScroll = (TOTAL_FRAMES - 1) * SCROLL_PER_FRAME;
+        let scrollAccumulator = parseFloat(String(sessionStorage.getItem('darkModeProgress') ?? maxScroll));
+
+        // Extract color values from CSS variables once
+        function hexToGrayscale(hex) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          return result ? parseInt(result[1], 16) : 255;
+        }
+
+        function hexToRgb(hex) {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+          } : { r: 255, g: 255, b: 255 };
+        }
+
+        const whiteHex = getComputedStyle(document.documentElement).getPropertyValue('--color-white').trim();
+        const blackHex = getComputedStyle(document.documentElement).getPropertyValue('--color-black').trim();
+        const linkLightHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-light').trim();
+        const linkDarkHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-dark').trim();
+
+        const WHITE_RGB = hexToGrayscale(whiteHex);
+        const BLACK_RGB = hexToGrayscale(blackHex);
+        const LINK_LIGHT = hexToRgb(linkLightHex);
+        const LINK_DARK = hexToRgb(linkDarkHex);
+
+        function updateColors() {
+          const frameProgress = (Math.floor(scrollAccumulator / SCROLL_PER_FRAME)) / (TOTAL_FRAMES - 1);
+
+          function interpolate(start, end, progress) {
+            return Math.round(start + (end - start) * progress);
+          }
+
+          const bgColor = interpolate(WHITE_RGB, BLACK_RGB, frameProgress);
+          const fgColor = interpolate(BLACK_RGB, WHITE_RGB, frameProgress);
+          const linkR = interpolate(LINK_LIGHT.r, LINK_DARK.r, frameProgress);
+          const linkG = interpolate(LINK_LIGHT.g, LINK_DARK.g, frameProgress);
+          const linkB = interpolate(LINK_LIGHT.b, LINK_DARK.b, frameProgress);
+
+          document.documentElement.style.setProperty('--color-bg', `rgb(${bgColor}, ${bgColor}, ${bgColor})`);
+          document.documentElement.style.setProperty('--color-fg', `rgb(${fgColor}, ${fgColor}, ${fgColor})`);
+          document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
+        }
+
+        // Initialize colors to match saved state
+        updateColors();
+
+        document.body.addEventListener('wheel', (e) => {
+          const { scrollHeight, clientHeight } = bodyEl;
+          const hasScrollableContent = scrollHeight > clientHeight;
+
+          // Update dark mode if:
+          // 1. Not scrolling inside page-body, OR
+          // 2. Inside page-body but it has no scrollable content
+          const targetNode = e.target instanceof Node ? e.target : bodyEl;
+          const shouldUpdateDarkMode = !bodyEl.contains(targetNode) || !hasScrollableContent;
+
+          if (shouldUpdateDarkMode) {
+            // Invert scroll direction: scroll down decreases, scroll up increases
+            scrollAccumulator = Math.max(0, Math.min(maxScroll, scrollAccumulator - e.deltaY));
+            sessionStorage.setItem('darkModeProgress', scrollAccumulator.toString());
+            updateColors();
+            if (typeof window['updateHeaderSpriteFrame'] === 'function') window['updateHeaderSpriteFrame']();
+          }
+        }, { passive: true });
+      }
+
+      // Initialize on first load and after every page swap
+      initPageLayout();
+      document.addEventListener('astro:after-swap', () => {
+        // Clear initialization flag before re-initializing
+        const pageBody = document.getElementById('page-body');
+        if (pageBody instanceof HTMLElement) {
+          pageBody.dataset.layoutInit = '0';
+        }
+        initPageLayout();
+      });
+    </script>
+    <script>
+      function initHeaderSprite() {
+        const canvasEl = document.getElementById('header-sprite-canvas');
+        if (!(canvasEl instanceof HTMLCanvasElement)) {
+          return;
+        }
+
+        // Prevent double initialization
+        if (canvasEl.dataset.initialized === '1') return;
+        canvasEl.dataset.initialized = '1';
+
+        const canvas = canvasEl;
+        const ctx = canvas.getContext('2d', { alpha: true });
+        if (!ctx) return;
+        ctx.imageSmoothingEnabled = false;
+
+        let spriteBitmap;
+        const img = new Image();
+        img.src = '/assets/sprite_sheet.png';
+        img.onload = async () => {
+          spriteBitmap = await createImageBitmap(img);
+          updateFrame();
+        };
+
+        function updateFrame() {
+          if (!spriteBitmap) return;
+
+          const maxScroll = (TOTAL_FRAMES - 1) * SCROLL_PER_FRAME;
+          const scrollAccumulator = parseFloat(String(sessionStorage.getItem('darkModeProgress') ?? String(maxScroll)));
+          const rawFrame = Math.floor(scrollAccumulator / SCROLL_PER_FRAME);
+          const frameIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, rawFrame));
+
+          const row = Math.floor(frameIndex / FRAMES_PER_ROW);
+          const col = frameIndex % FRAMES_PER_ROW;
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(
+            spriteBitmap,
+            col * FRAME_WIDTH, row * FRAME_HEIGHT,
+            FRAME_WIDTH, FRAME_HEIGHT,
+            0, 0,
+            canvas.width, canvas.height
+          );
+        }
+
+        // Store update function globally
+        window['updateHeaderSpriteFrame'] = updateFrame;
+
+        canvas.addEventListener('click', () => {
+          const maxScroll = (TOTAL_FRAMES - 1) * SCROLL_PER_FRAME;
+          const scrollAccumulator = parseFloat(String(sessionStorage.getItem('darkModeProgress') ?? maxScroll));
+          const currentFrame = Math.floor(scrollAccumulator / SCROLL_PER_FRAME);
+          const midpoint = (TOTAL_FRAMES - 1) / 2;
+
+          const targetFrame = currentFrame < midpoint ? TOTAL_FRAMES - 1 : 0;
+          const targetScroll = targetFrame * SCROLL_PER_FRAME;
+
+          const startScroll = scrollAccumulator;
+          const duration = 400;
+          const startTime = Date.now();
+
+          // Extract color values from CSS variables
+          function hexToGrayscale(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? parseInt(result[1], 16) : 255;
+          }
+
+          function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+              r: parseInt(result[1], 16),
+              g: parseInt(result[2], 16),
+              b: parseInt(result[3], 16)
+            } : { r: 255, g: 255, b: 255 };
+          }
+
+          const whiteHex = getComputedStyle(document.documentElement).getPropertyValue('--color-white').trim();
+          const blackHex = getComputedStyle(document.documentElement).getPropertyValue('--color-black').trim();
+          const linkLightHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-light').trim();
+          const linkDarkHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-dark').trim();
+
+          const WHITE_RGB = hexToGrayscale(whiteHex);
+          const BLACK_RGB = hexToGrayscale(blackHex);
+          const LINK_LIGHT = hexToRgb(linkLightHex);
+          const LINK_DARK = hexToRgb(linkDarkHex);
+
+          function animate() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            const easeProgress = progress < 0.5
+              ? 2 * progress * progress
+              : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+            const newScroll = startScroll + (targetScroll - startScroll) * easeProgress;
+            sessionStorage.setItem('darkModeProgress', newScroll.toString());
+
+            // Update colors
+            const frameProgress = (Math.floor(newScroll / SCROLL_PER_FRAME)) / (TOTAL_FRAMES - 1);
+
+            function interpolate(start, end, progress) {
+              return Math.round(start + (end - start) * progress);
+            }
+
+            const bgColor = interpolate(WHITE_RGB, BLACK_RGB, frameProgress);
+            const fgColor = interpolate(BLACK_RGB, WHITE_RGB, frameProgress);
+            const linkR = interpolate(LINK_LIGHT.r, LINK_DARK.r, frameProgress);
+            const linkG = interpolate(LINK_LIGHT.g, LINK_DARK.g, frameProgress);
+            const linkB = interpolate(LINK_LIGHT.b, LINK_DARK.b, frameProgress);
+
+            document.documentElement.style.setProperty('--color-bg', `rgb(${bgColor}, ${bgColor}, ${bgColor})`);
+            document.documentElement.style.setProperty('--color-fg', `rgb(${fgColor}, ${fgColor}, ${fgColor})`);
+            document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
+
+            updateFrame();
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            }
+          }
+
+          animate();
+        });
+      }
+
+      // Initialize on first load and after every page swap
+      initHeaderSprite();
+      document.addEventListener('astro:after-swap', () => {
+        // Clear initialization flag before re-initializing
+        const canvasEl = document.getElementById('header-sprite-canvas');
+        if (canvasEl instanceof HTMLCanvasElement) {
+          canvasEl.dataset.initialized = '0';
+        }
+        initHeaderSprite();
+      });
+    </script>
+  </body>
+</html>

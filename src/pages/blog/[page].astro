@@ -1,0 +1,96 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import BlogPostCard from "../../components/BlogPostCard.astro";
+
+// for automatic generation of blog pages and previews
+
+
+export async function getStaticPaths() {
+
+  const POSTS_PER_PAGE = 4;
+  
+  const allPostFiles = import.meta.glob('./*.md', { eager: true });
+
+  const allPosts = Object.entries(allPostFiles)
+    .map(([path, post]: [string, any]) => ({
+      title: post.frontmatter.title,
+      date: post.frontmatter.date,
+      slug: path.split('/').pop()?.replace('.md', '') || '',
+      description: post.frontmatter.description,
+    }))
+    .sort((a, b) => b.date.localeCompare(a.date)); // Lexicographic sort (YYYY-MM-DD format)
+
+  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
+
+  return Array.from({ length: totalPages }, (_, i) => {
+    const pageNum = i + 1;
+    const start = i * POSTS_PER_PAGE;
+    const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
+
+    return {
+      params: { page: pageNum.toString() },
+      props: {
+        posts,
+        currentPage: pageNum,
+        totalPages,
+      },
+    };
+  });
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
+---
+
+<PageLayout title="Blog" subtitle="Thoughts and writing." filepath="~/blog">
+  <div class="blog-content">
+    {posts.map((post) => (
+      <BlogPostCard
+        title={post.title}
+        date={post.date}
+        slug={post.slug}
+        description={post.description}
+      />
+    ))}
+  </div>
+
+  <div class="pagination">
+    {currentPage > 1 && (
+      <a href={`/blog/${currentPage - 1}`} class="page-link">← Previous</a>
+    )}
+    <span class="page-info">Page {currentPage} of {totalPages}</span>
+    {currentPage < totalPages && (
+      <a href={`/blog/${currentPage + 1}`} class="page-link">Next →</a>
+    )}
+  </div>
+</PageLayout>
+
+<style>
+  .blog-content {
+    flex: 0 1 auto;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-fg);
+  }
+
+  .page-link {
+    color: var(--color-link);
+    text-decoration: none;
+    opacity: 0.85;
+  }
+
+  .page-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  .page-info {
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+</style>
