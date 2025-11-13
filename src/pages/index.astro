@@ -58,6 +58,13 @@ import spriteConstants from "../utils/spriteConstants.js?raw";
       <CardFour />
     </main>
     <script>
+      // @ts-ignore - Constants are loaded from spriteConstants.js inline script
+      declare const TOTAL_FRAMES: number;
+      declare const SCROLL_PER_FRAME: number;
+      declare const FRAMES_PER_ROW: number;
+      declare const FRAME_WIDTH: number;
+      declare const FRAME_HEIGHT: number;
+
       function initHomeSprite() {
         // Restore dark mode progress from sessionStorage, default to dark mode
         const maxScroll = (TOTAL_FRAMES - 1) * SCROLL_PER_FRAME;
@@ -224,6 +231,8 @@ import spriteConstants from "../utils/spriteConstants.js?raw";
 
         if (isTouchDevice && isMobileWidth) {
           document.querySelectorAll('.card').forEach(card => {
+            if (!(card instanceof HTMLElement)) return;
+
             // Prevent double initialization
             if (card.dataset.mobileInit === '1') return;
             card.dataset.mobileInit = '1';
@@ -247,7 +256,9 @@ import spriteConstants from "../utils/spriteConstants.js?raw";
           canvasEl.dataset.initialized = '0';
         }
         document.querySelectorAll('.card').forEach(card => {
-          card.dataset.mobileInit = '0';
+          if (card instanceof HTMLElement) {
+            card.dataset.mobileInit = '0';
+          }
         });
 
         initHomeSprite();

@@ -163,12 +163,18 @@ const { title, subtitle, filepath } = Astro.props;
       </div>
     </div>
     <script>
+      // @ts-ignore - Constants are loaded from spriteConstants.js inline script
+      declare const TOTAL_FRAMES: number;
+      declare const SCROLL_PER_FRAME: number;
+      declare const FRAMES_PER_ROW: number;
+      declare const FRAME_WIDTH: number;
+      declare const FRAME_HEIGHT: number;
+
       function initPageLayout() {
         const pageBody = document.getElementById('page-body');
         const pageContainer = document.getElementById('page-container');
         if (!(pageBody instanceof HTMLElement && pageContainer instanceof HTMLElement)) return;
 
-        // Prevent double initialization
         if (pageBody.dataset.layoutInit === '1') return;
         pageBody.dataset.layoutInit = '1';
 
@@ -251,9 +257,6 @@ const { title, subtitle, filepath } = Astro.props;
           document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
         }
 
-        // Initialize colors to match saved state
-        updateColors();
-
         document.body.addEventListener('wheel', (e) => {
           const { scrollHeight, clientHeight } = bodyEl;
           const hasScrollableContent = scrollHeight > clientHeight;
@@ -286,6 +289,13 @@ const { title, subtitle, filepath } = Astro.props;
       });
     </script>
     <script>
+      // @ts-ignore - Constants are loaded from spriteConstants.js inline script
+      declare const TOTAL_FRAMES: number;
+      declare const SCROLL_PER_FRAME: number;
+      declare const FRAMES_PER_ROW: number;
+      declare const FRAME_WIDTH: number;
+      declare const FRAME_HEIGHT: number;
+
       function initHeaderSprite() {
         const canvasEl = document.getElementById('header-sprite-canvas');
         if (!(canvasEl instanceof HTMLCanvasElement)) {
@@ -310,7 +320,7 @@ const { title, subtitle, filepath } = Astro.props;
         };
 
         function updateFrame() {
-          if (!spriteBitmap) return;
+          if (!spriteBitmap || !ctx) return;
 
           const maxScroll = (TOTAL_FRAMES - 1) * SCROLL_PER_FRAME;
           const scrollAccumulator = parseFloat(String(sessionStorage.getItem('darkModeProgress') ?? String(maxScroll)));
