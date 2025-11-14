@@ -1,11 +1,11 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import "../styles/colors.css";
 import "../styles/fonts.css";
 import "../styles/layout.css";
 import Breadcrumb from "../components/Breadcrumb.astro";
+import ColorVariables from "../components/ColorVariables.astro";
+import constants from "../utils/constants.js?raw";
 import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
-import spriteConstants from "../utils/spriteConstants.js?raw";
 
 export interface Props {
   title: string;
@@ -23,7 +23,8 @@ const { title, subtitle, filepath } = Astro.props;
     <title>{title}</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <ClientRouter fallback="none" />
-    <script is:inline set:html={spriteConstants}></script>
+    <ColorVariables />
+    <script is:inline set:html={constants}></script>
     <script is:inline set:html={restoreDarkMode}></script>
     <style>
       :root { color-scheme: light; }
@@ -165,12 +166,16 @@ const { title, subtitle, filepath } = Astro.props;
       </div>
     </div>
     <script>
-      // @ts-ignore - Constants are loaded from spriteConstants.js inline script
+      // @ts-ignore - Constants are loaded from constants.js inline script
       declare const TOTAL_FRAMES: number;
       declare const SCROLL_PER_FRAME: number;
       declare const FRAMES_PER_ROW: number;
       declare const FRAME_WIDTH: number;
       declare const FRAME_HEIGHT: number;
+      declare const WHITE_RGB: number;
+      declare const BLACK_RGB: number;
+      declare const LINK_LIGHT: { r: number; g: number; b: number };
+      declare const LINK_DARK: { r: number; g: number; b: number };
 
       function initPageLayout() {
         const pageBody = document.getElementById('page-body');
@@ -215,31 +220,6 @@ const { title, subtitle, filepath } = Astro.props;
         // Dark mode scroll handling
         const maxScroll = (TOTAL_FRAMES - 1) * SCROLL_PER_FRAME;
         let scrollAccumulator = parseFloat(String(sessionStorage.getItem('darkModeProgress') ?? maxScroll));
-
-        // Extract color values from CSS variables once
-        function hexToGrayscale(hex) {
-          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-          return result ? parseInt(result[1], 16) : 255;
-        }
-
-        function hexToRgb(hex) {
-          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-          return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-          } : { r: 255, g: 255, b: 255 };
-        }
-
-        const whiteHex = getComputedStyle(document.documentElement).getPropertyValue('--color-white').trim();
-        const blackHex = getComputedStyle(document.documentElement).getPropertyValue('--color-black').trim();
-        const linkLightHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-light').trim();
-        const linkDarkHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-dark').trim();
-
-        const WHITE_RGB = hexToGrayscale(whiteHex);
-        const BLACK_RGB = hexToGrayscale(blackHex);
-        const LINK_LIGHT = hexToRgb(linkLightHex);
-        const LINK_DARK = hexToRgb(linkDarkHex);
 
         function updateColors() {
           const frameProgress = (Math.floor(scrollAccumulator / SCROLL_PER_FRAME)) / (TOTAL_FRAMES - 1);
@@ -292,12 +272,16 @@ const { title, subtitle, filepath } = Astro.props;
       });
     </script>
     <script>
-      // @ts-ignore - Constants are loaded from spriteConstants.js inline script
+      // @ts-ignore - Constants are loaded from constants.js inline script
       declare const TOTAL_FRAMES: number;
       declare const SCROLL_PER_FRAME: number;
       declare const FRAMES_PER_ROW: number;
       declare const FRAME_WIDTH: number;
       declare const FRAME_HEIGHT: number;
+      declare const WHITE_RGB: number;
+      declare const BLACK_RGB: number;
+      declare const LINK_LIGHT: { r: number; g: number; b: number };
+      declare const LINK_DARK: { r: number; g: number; b: number };
 
       function initHeaderSprite() {
         const canvasEl = document.getElementById('header-sprite-canvas');
@@ -358,31 +342,6 @@ const { title, subtitle, filepath } = Astro.props;
           const startScroll = scrollAccumulator;
           const duration = 400;
           const startTime = Date.now();
-
-          // Extract color values from CSS variables
-          function hexToGrayscale(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? parseInt(result[1], 16) : 255;
-          }
-
-          function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-              r: parseInt(result[1], 16),
-              g: parseInt(result[2], 16),
-              b: parseInt(result[3], 16)
-            } : { r: 255, g: 255, b: 255 };
-          }
-
-          const whiteHex = getComputedStyle(document.documentElement).getPropertyValue('--color-white').trim();
-          const blackHex = getComputedStyle(document.documentElement).getPropertyValue('--color-black').trim();
-          const linkLightHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-light').trim();
-          const linkDarkHex = getComputedStyle(document.documentElement).getPropertyValue('--color-link-dark').trim();
-
-          const WHITE_RGB = hexToGrayscale(whiteHex);
-          const BLACK_RGB = hexToGrayscale(blackHex);
-          const LINK_LIGHT = hexToRgb(linkLightHex);
-          const LINK_DARK = hexToRgb(linkDarkHex);
 
           function animate() {
             const elapsed = Date.now() - startTime;
