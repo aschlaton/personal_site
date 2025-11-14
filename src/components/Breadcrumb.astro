@@ -30,7 +30,12 @@ const isHome = filepath === "~/";
   {/* Show remaining path segments */}
   {pathParts.map((segment, index) => {
     const isLast = index === pathParts.length - 1;
-    const path = "/" + pathParts.slice(0, index + 1).join('/');
+    let path = "/" + pathParts.slice(0, index + 1).join('/');
+
+    // Special case: redirect /blog to /blog/1
+    if (path === '/blog') {
+      path = '/blog/1';
+    }
 
     return (
       <>
