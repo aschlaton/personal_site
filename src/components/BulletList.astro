@@ -125,9 +125,8 @@ const { collapsible = false } = Astro.props;
           // Check if already wrapped
           if (li.querySelector('.item-label')) return;
 
-          // Get direct text nodes only (not from nested elements)
           const textNodes = Array.from(li.childNodes).filter(
-            node => node.nodeType === Node.TEXT_NODE && node.textContent.trim()
+            node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim()
           );
 
           if (textNodes.length > 0) {
@@ -140,20 +139,18 @@ const { collapsible = false } = Astro.props;
           }
         });
 
-        // Toggle expand/collapse - handle clicks on any level
+        // Toggle expand/collapse
         root.addEventListener('click', (e) => {
           if (!(e.target instanceof Element)) return;
 
           // Only respond to clicks on item labels
           const isLabelClick = e.target.classList.contains('item-label');
 
-          // Also check if clicking on the li itself near the arrow (::before pseudo-element)
-          // The arrow is roughly 20px wide (icon + margin)
           let isArrowClick = false;
           if (e.target.tagName === 'LI' && e.target.classList.contains('has-children')) {
             const rect = e.target.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
-            isArrowClick = clickX < 20; // Arrow is within first 20px
+            isArrowClick = clickX < 20;
           }
 
           if (!isLabelClick && !isArrowClick) return;
@@ -171,8 +168,8 @@ const { collapsible = false } = Astro.props;
       });
     }
 
-    // Run on initial load and after every view transition
     enhanceBulletLists();
+    
     document.addEventListener('astro:after-swap', () => {
       // Clear enhancement flags before re-initializing
       document.querySelectorAll('.arrow-list.collapsible').forEach((root) => {
