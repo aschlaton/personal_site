@@ -88,16 +88,6 @@ const { collapsible = false } = Astro.props;
     display: block;
   }
 
-  /* Nested list items also clickable if they have children */
-  :global(.arrow-list.collapsible .arrow-list li.has-children) {
-    cursor: pointer;
-  }
-
-  :global(.arrow-list.collapsible .arrow-list li.has-children)::before {
-    display: inline-block;
-    transition: transform 0.3s ease;
-  }
-
   :global(.arrow-list.collapsible .arrow-list li.expanded.has-children)::before {
     transform: rotate(90deg);
   }
