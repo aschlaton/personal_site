@@ -1,4 +1,11 @@
 ---
-// just a convenience file
-return Astro.redirect('/blog/1');
+// redirect to first page
 ---
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0;url=/blog/1">
+    <script>
+      window.location.href = '/blog/1';
+    </script>
+  </head>
+</html>
