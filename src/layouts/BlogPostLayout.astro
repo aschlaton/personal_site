@@ -10,9 +10,12 @@ export interface Props {
 }
 
 const { frontmatter } = Astro.props;
+
+// Extract slug from URL pathname
+const slug = Astro.url.pathname.split('/').filter(Boolean).pop() || '';
 ---
 
-<PageLayout title={frontmatter.title} subtitle={frontmatter.date} filepath={`~/blog/${Astro.url.pathname.split('/').pop()}`}>
+<PageLayout title={frontmatter.title} subtitle={frontmatter.date} filepath={`~/blog/${slug}`}>
   <article class="blog-post">
     <slot />
   </article>
