@@ -34,7 +34,7 @@ const { title, subtitle, filepath } = Astro.props;
         margin-left: var(--layout-margin);
         margin-right: var(--layout-margin);
         max-width: calc(2 * var(--card-width) + 36px);
-        margin-top: var(--page-top);
+        margin-top: calc(var(--page-top) - 4px);
         height: calc(100vh - var(--page-top) - var(--page-bottom));
         overflow: hidden;
         display: flex;
@@ -50,7 +50,7 @@ const { title, subtitle, filepath } = Astro.props;
       .header-content {
         display: flex;
         justify-content: space-between;
-        align-items: flex-end;
+        align-items: flex-start;
         padding-bottom: 12px;
         padding-right: 36px;
       }
@@ -69,11 +69,12 @@ const { title, subtitle, filepath } = Astro.props;
       h1 {
         font-size: var(--font-size-title);
         font-weight: var(--font-weight-normal);
+        line-height: var(--line-height-title);
         margin: 0;
       }
 
       .header-text .card-body {
-        margin-top: 12px;
+        margin-top: 6px;
       }
 
       .page-body {
