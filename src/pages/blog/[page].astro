@@ -41,7 +41,7 @@ export async function getStaticPaths() {
 const { posts, currentPage, totalPages } = Astro.props;
 ---
 
-<PageLayout title="Blog" subtitle="Thoughts and writing." filepath="~/blog">
+<PageLayout title="Blog" subtitle="thoughts" filepath="~/blog">
   <div class="blog-content">
     {posts.map((post) => (
       <BlogPostCard

@@ -2,7 +2,7 @@
 layout: ../../layouts/BlogPostLayout.astro
 title: "pixel art"
 date: "2025-10-5"
-description: "🎨"
+description: "👾🎨"
 ---
 
 Finished my first piece of pixel art! It's a medium that I've loved for a while now thanks to some [games](https://terraria.org/) [I've](https://www.realmofthemadgod.com/) [played](https://www.stardewvalley.net/). It also happens to be a medium that's more approachable (and imo more fun to work with) than others.

@@ -111,7 +111,7 @@ const { collapsible = false } = Astro.props;
 
 {collapsible && (
   <script>
-    (function () {
+    function enhanceBulletLists() {
       // Enhance all collapsible arrow-lists once
       document.querySelectorAll('.arrow-list.collapsible').forEach((root) => {
         if (root instanceof HTMLElement === false) return;
@@ -169,6 +169,18 @@ const { collapsible = false } = Astro.props;
           li.classList.toggle('expanded');
         });
       });
-    })();
+    }
+
+    // Run on initial load and after every view transition
+    enhanceBulletLists();
+    document.addEventListener('astro:after-swap', () => {
+      // Clear enhancement flags before re-initializing
+      document.querySelectorAll('.arrow-list.collapsible').forEach((root) => {
+        if (root instanceof HTMLElement) {
+          root.dataset.enhanced = '0';
+        }
+      });
+      enhanceBulletLists();
+    });
   </script>
 )}
