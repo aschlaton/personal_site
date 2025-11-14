@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import Analytics from "@vercel/analytics/astro";
 import "../styles/fonts.css";
 import "../styles/layout.css";
 import IntroCard from "../components/home/IntroCard.astro";
@@ -240,6 +241,7 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
         setupMobileCards();
       });
     </script>
+    <Analytics />
   </body>
 </html>
 
