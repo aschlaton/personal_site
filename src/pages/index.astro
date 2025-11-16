@@ -31,17 +31,17 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
       @media (max-width: 900px) {
         :global(.card) { min-height: var(--card-height) !important; height: var(--card-height) !important; padding: 24px 12px; justify-content: center; align-items: center; overflow: hidden; position: relative; }
         :global(.card-title) { font-size: 1rem; margin: 0; white-space: nowrap; transition: transform 0.3s ease; }
-        :global(.card-body), :global(.arrow-list) { position: absolute; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; transform: translateY(20px); pointer-events: none; }
+        :global(.card-body), :global(.arrow-list) { position: absolute; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; transform: translateY(20px); pointer-events: none; left: 12px; right: 12px; text-align: left; width: auto; align-self: flex-start; }
 
         @media (hover: hover) {
-          :global(.card:hover) { padding-left: 12px; padding-right: 12px; }
+          :global(.card:hover:has(.card-title)) { padding-left: 12px; padding-right: 12px; }
           :global(.card:hover .card-title) { transform: translateY(-100%); opacity: 0; }
           :global(.card:hover .card-body), :global(.card:hover .arrow-list) { opacity: 1; transform: translateY(0); position: static; pointer-events: auto; }
         }
 
         @media (hover: none) {
           :global(.card) { cursor: pointer; }
-          :global(.card.expanded) { padding-left: 12px; padding-right: 12px; }
+          :global(.card.expanded:has(.card-title)) { padding-left: 12px; padding-right: 12px; }
           :global(.card.expanded .card-title) { transform: translateY(-100%); opacity: 0; }
           :global(.card.expanded .card-body), :global(.card.expanded .arrow-list) { opacity: 1; transform: translateY(0); position: static; pointer-events: auto; }
         }
