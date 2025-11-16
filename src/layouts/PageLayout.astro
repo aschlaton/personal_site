@@ -147,6 +147,26 @@ const { title, subtitle, filepath } = Astro.props;
         flex-shrink: 0;
       }
       #header-sprite-canvas { view-transition-name: none; }
+
+      @media (max-width: 900px) {
+        .header-content {
+          padding-right: 12px;
+        }
+
+        .header-text {
+          padding-left: 12px;
+        }
+
+        .divider {
+          margin-left: 12px;
+          margin-right: 12px;
+        }
+
+        .page-body {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+      }
     </style>
   </head>
   <body>
