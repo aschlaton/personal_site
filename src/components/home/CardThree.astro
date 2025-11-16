@@ -3,5 +3,33 @@ import Card from "../Card.astro";
 ---
 
 <Card corners="tl tr br">
-  <canvas id="home-sprite-canvas" width="256" height="256" style="width: 80%; height: auto; aspect-ratio: 1/1; display: block; cursor: pointer; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; view-transition-name: none;"></canvas>
+  <div class="canvas-wrapper">
+    <canvas id="home-sprite-canvas" width="256" height="256"></canvas>
+  </div>
 </Card>
+
+<style>
+  .canvas-wrapper {
+    width: 80%;
+    position: relative;
+  }
+
+  .canvas-wrapper::before {
+    content: '';
+    display: block;
+    padding-bottom: 100%; /* 1:1 aspect ratio */
+  }
+
+  #home-sprite-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    view-transition-name: none;
+  }
+</style>
