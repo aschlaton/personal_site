@@ -50,4 +50,3 @@ EOF
 
 echo "✓ Created new blog post: $FILE_PATH"
 echo "  URL will be: /blog/$SLUG"
-echo "  Edit the file to add your content and description!"
