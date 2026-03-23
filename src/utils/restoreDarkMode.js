@@ -17,11 +17,15 @@
   const fgR = lerp(FG_LIGHT.r, FG_DARK.r, progress);
   const fgG = lerp(FG_LIGHT.g, FG_DARK.g, progress);
   const fgB = lerp(FG_LIGHT.b, FG_DARK.b, progress);
+  const borderR = lerp(BORDER_LIGHT.r, BORDER_DARK.r, progress);
+  const borderG = lerp(BORDER_LIGHT.g, BORDER_DARK.g, progress);
+  const borderB = lerp(BORDER_LIGHT.b, BORDER_DARK.b, progress);
   const linkR = lerp(LINK_LIGHT.r, LINK_DARK.r, progress);
   const linkG = lerp(LINK_LIGHT.g, LINK_DARK.g, progress);
   const linkB = lerp(LINK_LIGHT.b, LINK_DARK.b, progress);
 
   document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
   document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
+  document.documentElement.style.setProperty('--color-border', `rgb(${borderR}, ${borderG}, ${borderB})`);
   document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
 })();

@@ -198,6 +198,8 @@ const { title, subtitle, filepath } = Astro.props;
       declare const BG_DARK: { r: number; g: number; b: number };
       declare const FG_LIGHT: { r: number; g: number; b: number };
       declare const FG_DARK: { r: number; g: number; b: number };
+      declare const BORDER_LIGHT: { r: number; g: number; b: number };
+      declare const BORDER_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
       declare const LINK_DARK: { r: number; g: number; b: number };
 
@@ -258,12 +260,16 @@ const { title, subtitle, filepath } = Astro.props;
           const fgR = interpolate(FG_LIGHT.r, FG_DARK.r, frameProgress);
           const fgG = interpolate(FG_LIGHT.g, FG_DARK.g, frameProgress);
           const fgB = interpolate(FG_LIGHT.b, FG_DARK.b, frameProgress);
+          const borderR = interpolate(BORDER_LIGHT.r, BORDER_DARK.r, frameProgress);
+          const borderG = interpolate(BORDER_LIGHT.g, BORDER_DARK.g, frameProgress);
+          const borderB = interpolate(BORDER_LIGHT.b, BORDER_DARK.b, frameProgress);
           const linkR = interpolate(LINK_LIGHT.r, LINK_DARK.r, frameProgress);
           const linkG = interpolate(LINK_LIGHT.g, LINK_DARK.g, frameProgress);
           const linkB = interpolate(LINK_LIGHT.b, LINK_DARK.b, frameProgress);
 
           document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
           document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
+          document.documentElement.style.setProperty('--color-border', `rgb(${borderR}, ${borderG}, ${borderB})`);
           document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
         }
 
@@ -310,6 +316,8 @@ const { title, subtitle, filepath } = Astro.props;
       declare const BG_DARK: { r: number; g: number; b: number };
       declare const FG_LIGHT: { r: number; g: number; b: number };
       declare const FG_DARK: { r: number; g: number; b: number };
+      declare const BORDER_LIGHT: { r: number; g: number; b: number };
+      declare const BORDER_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
       declare const LINK_DARK: { r: number; g: number; b: number };
 
@@ -396,12 +404,16 @@ const { title, subtitle, filepath } = Astro.props;
             const fgR = interpolate(FG_LIGHT.r, FG_DARK.r, frameProgress);
             const fgG = interpolate(FG_LIGHT.g, FG_DARK.g, frameProgress);
             const fgB = interpolate(FG_LIGHT.b, FG_DARK.b, frameProgress);
+            const borderR = interpolate(BORDER_LIGHT.r, BORDER_DARK.r, frameProgress);
+            const borderG = interpolate(BORDER_LIGHT.g, BORDER_DARK.g, frameProgress);
+            const borderB = interpolate(BORDER_LIGHT.b, BORDER_DARK.b, frameProgress);
             const linkR = interpolate(LINK_LIGHT.r, LINK_DARK.r, frameProgress);
             const linkG = interpolate(LINK_LIGHT.g, LINK_DARK.g, frameProgress);
             const linkB = interpolate(LINK_LIGHT.b, LINK_DARK.b, frameProgress);
 
             document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
             document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
+            document.documentElement.style.setProperty('--color-border', `rgb(${borderR}, ${borderG}, ${borderB})`);
             document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
 
             updateFrame();

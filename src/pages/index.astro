@@ -71,6 +71,8 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
       declare const BG_DARK: { r: number; g: number; b: number };
       declare const FG_LIGHT: { r: number; g: number; b: number };
       declare const FG_DARK: { r: number; g: number; b: number };
+      declare const BORDER_LIGHT: { r: number; g: number; b: number };
+      declare const BORDER_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
       declare const LINK_DARK: { r: number; g: number; b: number };
 
@@ -129,12 +131,16 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
           const fgR = interpolateColor(FG_LIGHT.r, FG_DARK.r, progress);
           const fgG = interpolateColor(FG_LIGHT.g, FG_DARK.g, progress);
           const fgB = interpolateColor(FG_LIGHT.b, FG_DARK.b, progress);
+          const borderR = interpolateColor(BORDER_LIGHT.r, BORDER_DARK.r, progress);
+          const borderG = interpolateColor(BORDER_LIGHT.g, BORDER_DARK.g, progress);
+          const borderB = interpolateColor(BORDER_LIGHT.b, BORDER_DARK.b, progress);
           const linkR = interpolateColor(LINK_LIGHT.r, LINK_DARK.r, progress);
           const linkG = interpolateColor(LINK_LIGHT.g, LINK_DARK.g, progress);
           const linkB = interpolateColor(LINK_LIGHT.b, LINK_DARK.b, progress);
 
           document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
           document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
+          document.documentElement.style.setProperty('--color-border', `rgb(${borderR}, ${borderG}, ${borderB})`);
           document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
         }
 

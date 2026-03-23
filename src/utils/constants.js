@@ -22,5 +22,7 @@ const BG_LIGHT = hexToRgb(style.getPropertyValue('--color-white').trim());
 const BG_DARK = hexToRgb(style.getPropertyValue('--color-black').trim());
 const FG_LIGHT = hexToRgb(style.getPropertyValue('--color-fg-light').trim());
 const FG_DARK = hexToRgb(style.getPropertyValue('--color-fg-dark').trim());
+const BORDER_LIGHT = hexToRgb(style.getPropertyValue('--color-border-light').trim());
+const BORDER_DARK = hexToRgb(style.getPropertyValue('--color-border-dark').trim());
 const LINK_LIGHT = hexToRgb(style.getPropertyValue('--color-link-light').trim());
 const LINK_DARK = hexToRgb(style.getPropertyValue('--color-link-dark').trim());
