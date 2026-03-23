@@ -186,7 +186,7 @@ const { title, subtitle, filepath } = Astro.props;
         <slot />
       </div>
     </div>
-    <Analytics />
+    <Analytics/>
     <script>
       // @ts-ignore - Constants are loaded from constants.js inline script
       declare const TOTAL_FRAMES: number;
@@ -194,8 +194,10 @@ const { title, subtitle, filepath } = Astro.props;
       declare const FRAMES_PER_ROW: number;
       declare const FRAME_WIDTH: number;
       declare const FRAME_HEIGHT: number;
-      declare const WHITE_RGB: number;
-      declare const BLACK_RGB: number;
+      declare const BG_LIGHT: { r: number; g: number; b: number };
+      declare const BG_DARK: { r: number; g: number; b: number };
+      declare const FG_LIGHT: { r: number; g: number; b: number };
+      declare const FG_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
       declare const LINK_DARK: { r: number; g: number; b: number };
 
@@ -250,14 +252,18 @@ const { title, subtitle, filepath } = Astro.props;
             return Math.round(start + (end - start) * progress);
           }
 
-          const bgColor = interpolate(WHITE_RGB, BLACK_RGB, frameProgress);
-          const fgColor = interpolate(BLACK_RGB, WHITE_RGB, frameProgress);
+          const bgR = interpolate(BG_LIGHT.r, BG_DARK.r, frameProgress);
+          const bgG = interpolate(BG_LIGHT.g, BG_DARK.g, frameProgress);
+          const bgB = interpolate(BG_LIGHT.b, BG_DARK.b, frameProgress);
+          const fgR = interpolate(FG_LIGHT.r, FG_DARK.r, frameProgress);
+          const fgG = interpolate(FG_LIGHT.g, FG_DARK.g, frameProgress);
+          const fgB = interpolate(FG_LIGHT.b, FG_DARK.b, frameProgress);
           const linkR = interpolate(LINK_LIGHT.r, LINK_DARK.r, frameProgress);
           const linkG = interpolate(LINK_LIGHT.g, LINK_DARK.g, frameProgress);
           const linkB = interpolate(LINK_LIGHT.b, LINK_DARK.b, frameProgress);
 
-          document.documentElement.style.setProperty('--color-bg', `rgb(${bgColor}, ${bgColor}, ${bgColor})`);
-          document.documentElement.style.setProperty('--color-fg', `rgb(${fgColor}, ${fgColor}, ${fgColor})`);
+          document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
+          document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
           document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
         }
 
@@ -300,8 +306,10 @@ const { title, subtitle, filepath } = Astro.props;
       declare const FRAMES_PER_ROW: number;
       declare const FRAME_WIDTH: number;
       declare const FRAME_HEIGHT: number;
-      declare const WHITE_RGB: number;
-      declare const BLACK_RGB: number;
+      declare const BG_LIGHT: { r: number; g: number; b: number };
+      declare const BG_DARK: { r: number; g: number; b: number };
+      declare const FG_LIGHT: { r: number; g: number; b: number };
+      declare const FG_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
       declare const LINK_DARK: { r: number; g: number; b: number };
 
@@ -376,21 +384,24 @@ const { title, subtitle, filepath } = Astro.props;
             const newScroll = startScroll + (targetScroll - startScroll) * easeProgress;
             sessionStorage.setItem('darkModeProgress', newScroll.toString());
 
-            // Update colors
             const frameProgress = (Math.floor(newScroll / SCROLL_PER_FRAME)) / (TOTAL_FRAMES - 1);
 
             function interpolate(start, end, progress) {
               return Math.round(start + (end - start) * progress);
             }
 
-            const bgColor = interpolate(WHITE_RGB, BLACK_RGB, frameProgress);
-            const fgColor = interpolate(BLACK_RGB, WHITE_RGB, frameProgress);
+            const bgR = interpolate(BG_LIGHT.r, BG_DARK.r, frameProgress);
+            const bgG = interpolate(BG_LIGHT.g, BG_DARK.g, frameProgress);
+            const bgB = interpolate(BG_LIGHT.b, BG_DARK.b, frameProgress);
+            const fgR = interpolate(FG_LIGHT.r, FG_DARK.r, frameProgress);
+            const fgG = interpolate(FG_LIGHT.g, FG_DARK.g, frameProgress);
+            const fgB = interpolate(FG_LIGHT.b, FG_DARK.b, frameProgress);
             const linkR = interpolate(LINK_LIGHT.r, LINK_DARK.r, frameProgress);
             const linkG = interpolate(LINK_LIGHT.g, LINK_DARK.g, frameProgress);
             const linkB = interpolate(LINK_LIGHT.b, LINK_DARK.b, frameProgress);
 
-            document.documentElement.style.setProperty('--color-bg', `rgb(${bgColor}, ${bgColor}, ${bgColor})`);
-            document.documentElement.style.setProperty('--color-fg', `rgb(${fgColor}, ${fgColor}, ${fgColor})`);
+            document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
+            document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
             document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
 
             updateFrame();

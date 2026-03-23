@@ -67,8 +67,10 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
       declare const FRAMES_PER_ROW: number;
       declare const FRAME_WIDTH: number;
       declare const FRAME_HEIGHT: number;
-      declare const WHITE_RGB: number;
-      declare const BLACK_RGB: number;
+      declare const BG_LIGHT: { r: number; g: number; b: number };
+      declare const BG_DARK: { r: number; g: number; b: number };
+      declare const FG_LIGHT: { r: number; g: number; b: number };
+      declare const FG_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
       declare const LINK_DARK: { r: number; g: number; b: number };
 
@@ -119,23 +121,20 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
             canvas.width, canvas.height // dest width, height
           );
 
-          // Calculate color transition based on frame
-          // Frame 0 = light, Frame 71 (last) = dark
           const progress = frameIndex / (TOTAL_FRAMES - 1);
 
-          // Interpolate colors
-          // Background: white to dark gray
-          // Foreground: dark gray to white
-          const bgColor = interpolateColor(WHITE_RGB, BLACK_RGB, progress);
-          const fgColor = interpolateColor(BLACK_RGB, WHITE_RGB, progress);
-
-          // Link color: light blue-purple to white
+          const bgR = interpolateColor(BG_LIGHT.r, BG_DARK.r, progress);
+          const bgG = interpolateColor(BG_LIGHT.g, BG_DARK.g, progress);
+          const bgB = interpolateColor(BG_LIGHT.b, BG_DARK.b, progress);
+          const fgR = interpolateColor(FG_LIGHT.r, FG_DARK.r, progress);
+          const fgG = interpolateColor(FG_LIGHT.g, FG_DARK.g, progress);
+          const fgB = interpolateColor(FG_LIGHT.b, FG_DARK.b, progress);
           const linkR = interpolateColor(LINK_LIGHT.r, LINK_DARK.r, progress);
           const linkG = interpolateColor(LINK_LIGHT.g, LINK_DARK.g, progress);
           const linkB = interpolateColor(LINK_LIGHT.b, LINK_DARK.b, progress);
 
-          document.documentElement.style.setProperty('--color-bg', `rgb(${bgColor}, ${bgColor}, ${bgColor})`);
-          document.documentElement.style.setProperty('--color-fg', `rgb(${fgColor}, ${fgColor}, ${fgColor})`);
+          document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
+          document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
           document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
         }
 
