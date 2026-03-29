@@ -27,9 +27,18 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
       html, body { height: 100%; margin: 0; background: var(--color-bg); color: var(--color-fg); overflow: hidden; touch-action: manipulation; }
       * { user-select: none; -webkit-user-select: none; -moz-user-select: none; }
       body { min-height: 100vh; display: grid; place-items: center; font-family: var(--font-family); }
-      main { display: grid; grid-template-columns: repeat(2, var(--card-width)); gap: 36px; padding: 32px; width: 80vw; margin: 0 auto; justify-content: center; position: relative; }
+      main {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: var(--grid-gutter);
+        padding: var(--grid-page-padding);
+        width: min(80vw, var(--content-max-width));
+        margin: 0 auto;
+        position: relative;
+      }
+      main > :global(.card) { grid-column: span 6; }
       @media (max-width: 900px) {
-        :global(.card) { min-height: var(--card-height) !important; height: var(--card-height) !important; padding: 24px 12px; justify-content: center; align-items: center; overflow: hidden; position: relative; }
+        :global(.card) { min-height: var(--card-height) !important; height: var(--card-height) !important; padding: 12px; justify-content: center; align-items: center; overflow: hidden; position: relative; }
         :global(.card-title) { font-size: 1rem; margin: 0; white-space: nowrap; transition: transform 0.3s ease; }
         :global(.card-body), :global(.arrow-list) { position: absolute; opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease; transform: translateY(20px); pointer-events: none; left: 12px; right: 12px; text-align: left; width: auto; align-self: flex-start; }
 
@@ -71,6 +80,12 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
       declare const BG_DARK: { r: number; g: number; b: number };
       declare const FG_LIGHT: { r: number; g: number; b: number };
       declare const FG_DARK: { r: number; g: number; b: number };
+      declare const SUBTITLE_LIGHT: { r: number; g: number; b: number };
+      declare const SUBTITLE_DARK: { r: number; g: number; b: number };
+      declare const MUTED_LIGHT: { r: number; g: number; b: number };
+      declare const MUTED_DARK: { r: number; g: number; b: number };
+      declare const DIVIDER_LIGHT: { r: number; g: number; b: number };
+      declare const DIVIDER_DARK: { r: number; g: number; b: number };
       declare const BORDER_LIGHT: { r: number; g: number; b: number };
       declare const BORDER_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
@@ -131,6 +146,15 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
           const fgR = interpolateColor(FG_LIGHT.r, FG_DARK.r, progress);
           const fgG = interpolateColor(FG_LIGHT.g, FG_DARK.g, progress);
           const fgB = interpolateColor(FG_LIGHT.b, FG_DARK.b, progress);
+          const subtitleR = interpolateColor(SUBTITLE_LIGHT.r, SUBTITLE_DARK.r, progress);
+          const subtitleG = interpolateColor(SUBTITLE_LIGHT.g, SUBTITLE_DARK.g, progress);
+          const subtitleB = interpolateColor(SUBTITLE_LIGHT.b, SUBTITLE_DARK.b, progress);
+          const mutedR = interpolateColor(MUTED_LIGHT.r, MUTED_DARK.r, progress);
+          const mutedG = interpolateColor(MUTED_LIGHT.g, MUTED_DARK.g, progress);
+          const mutedB = interpolateColor(MUTED_LIGHT.b, MUTED_DARK.b, progress);
+          const dividerR = interpolateColor(DIVIDER_LIGHT.r, DIVIDER_DARK.r, progress);
+          const dividerG = interpolateColor(DIVIDER_LIGHT.g, DIVIDER_DARK.g, progress);
+          const dividerB = interpolateColor(DIVIDER_LIGHT.b, DIVIDER_DARK.b, progress);
           const borderR = interpolateColor(BORDER_LIGHT.r, BORDER_DARK.r, progress);
           const borderG = interpolateColor(BORDER_LIGHT.g, BORDER_DARK.g, progress);
           const borderB = interpolateColor(BORDER_LIGHT.b, BORDER_DARK.b, progress);
@@ -140,6 +164,9 @@ import restoreDarkMode from "../utils/restoreDarkMode.js?raw";
 
           document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
           document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
+          document.documentElement.style.setProperty('--color-subtitle', `rgb(${subtitleR}, ${subtitleG}, ${subtitleB})`);
+          document.documentElement.style.setProperty('--color-muted', `rgb(${mutedR}, ${mutedG}, ${mutedB})`);
+          document.documentElement.style.setProperty('--color-divider', `rgb(${dividerR}, ${dividerG}, ${dividerB})`);
           document.documentElement.style.setProperty('--color-border', `rgb(${borderR}, ${borderG}, ${borderB})`);
           document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
         }

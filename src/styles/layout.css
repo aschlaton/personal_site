@@ -1,7 +1,11 @@
 :root {
-  --layout-margin: calc(50vw - 18vw - 18px);
   --card-width: 18vw;
   --card-height: 22vh;
+  --grid-gutter: 36px;
+  --grid-page-padding: 32px;
+  --content-inline-padding: 36px;
+  --content-max-width: calc(2 * var(--card-width) + var(--grid-gutter));
+  --layout-margin: max(var(--grid-page-padding), calc((100vw - var(--content-max-width)) / 2));
   --page-top: calc(50vh - 22vh - 50px);
   --page-bottom: calc(14vh + 36px);
 }
@@ -9,7 +13,11 @@
 @media (max-width: 900px) {
   :root {
     --card-width: max(18vw, 120px);
-    --layout-margin: calc(50vw - var(--card-width) - 18px);
     --card-height: min(22vh, var(--card-width));
+    --grid-gutter: 12px;
+    --grid-page-padding: 12px;
+    --content-inline-padding: 12px;
+    --content-max-width: calc(2 * var(--card-width) + var(--grid-gutter));
+    --layout-margin: max(var(--grid-page-padding), calc((100vw - var(--content-max-width)) / 2));
   }
 }

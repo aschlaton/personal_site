@@ -33,9 +33,9 @@ const { title, subtitle, filepath } = Astro.props;
       body { min-height: 100vh; font-family: var(--font-family); }
 
       .page-container {
-        margin-left: var(--layout-margin);
-        margin-right: var(--layout-margin);
-        max-width: calc(2 * var(--card-width) + 36px);
+        width: min(var(--content-max-width), calc(100vw - (2 * var(--layout-margin))));
+        margin-left: auto;
+        margin-right: auto;
         margin-top: calc(var(--page-top) - 4px);
         height: calc(100vh - var(--page-top) - var(--page-bottom));
         overflow: hidden;
@@ -54,18 +54,18 @@ const { title, subtitle, filepath } = Astro.props;
         justify-content: space-between;
         align-items: flex-start;
         padding-bottom: 12px;
-        padding-right: 36px;
+        padding-right: var(--content-inline-padding);
       }
 
       .header-text {
         flex: 1;
-        padding-left: 36px;
+        padding-left: var(--content-inline-padding);
       }
 
       .divider {
-        border-bottom: 1px solid var(--color-fg);
-        margin-left: 36px;
-        margin-right: 36px;
+        border-bottom: 1px solid var(--color-divider);
+        margin-left: var(--content-inline-padding);
+        margin-right: var(--content-inline-padding);
       }
 
       h1 {
@@ -81,10 +81,11 @@ const { title, subtitle, filepath } = Astro.props;
 
       .page-body {
         padding-top: 12px;
-        padding-left: 36px;
-        padding-right: 36px;
+        padding-left: var(--content-inline-padding);
+        padding-right: var(--content-inline-padding);
         font-size: var(--font-size-body);
         line-height: var(--line-height-body);
+        scroll-behavior: auto;
         overflow-y: auto;
         overflow-x: hidden;
         flex: 1;
@@ -147,26 +148,6 @@ const { title, subtitle, filepath } = Astro.props;
         flex-shrink: 0;
       }
       #header-sprite-canvas { view-transition-name: none; }
-
-      @media (max-width: 900px) {
-        .header-content {
-          padding-right: 12px;
-        }
-
-        .header-text {
-          padding-left: 12px;
-        }
-
-        .divider {
-          margin-left: 12px;
-          margin-right: 12px;
-        }
-
-        .page-body {
-          padding-left: 12px;
-          padding-right: 12px;
-        }
-      }
     </style>
   </head>
   <body>
@@ -198,6 +179,12 @@ const { title, subtitle, filepath } = Astro.props;
       declare const BG_DARK: { r: number; g: number; b: number };
       declare const FG_LIGHT: { r: number; g: number; b: number };
       declare const FG_DARK: { r: number; g: number; b: number };
+      declare const SUBTITLE_LIGHT: { r: number; g: number; b: number };
+      declare const SUBTITLE_DARK: { r: number; g: number; b: number };
+      declare const MUTED_LIGHT: { r: number; g: number; b: number };
+      declare const MUTED_DARK: { r: number; g: number; b: number };
+      declare const DIVIDER_LIGHT: { r: number; g: number; b: number };
+      declare const DIVIDER_DARK: { r: number; g: number; b: number };
       declare const BORDER_LIGHT: { r: number; g: number; b: number };
       declare const BORDER_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
@@ -260,6 +247,15 @@ const { title, subtitle, filepath } = Astro.props;
           const fgR = interpolate(FG_LIGHT.r, FG_DARK.r, frameProgress);
           const fgG = interpolate(FG_LIGHT.g, FG_DARK.g, frameProgress);
           const fgB = interpolate(FG_LIGHT.b, FG_DARK.b, frameProgress);
+          const subtitleR = interpolate(SUBTITLE_LIGHT.r, SUBTITLE_DARK.r, frameProgress);
+          const subtitleG = interpolate(SUBTITLE_LIGHT.g, SUBTITLE_DARK.g, frameProgress);
+          const subtitleB = interpolate(SUBTITLE_LIGHT.b, SUBTITLE_DARK.b, frameProgress);
+          const mutedR = interpolate(MUTED_LIGHT.r, MUTED_DARK.r, frameProgress);
+          const mutedG = interpolate(MUTED_LIGHT.g, MUTED_DARK.g, frameProgress);
+          const mutedB = interpolate(MUTED_LIGHT.b, MUTED_DARK.b, frameProgress);
+          const dividerR = interpolate(DIVIDER_LIGHT.r, DIVIDER_DARK.r, frameProgress);
+          const dividerG = interpolate(DIVIDER_LIGHT.g, DIVIDER_DARK.g, frameProgress);
+          const dividerB = interpolate(DIVIDER_LIGHT.b, DIVIDER_DARK.b, frameProgress);
           const borderR = interpolate(BORDER_LIGHT.r, BORDER_DARK.r, frameProgress);
           const borderG = interpolate(BORDER_LIGHT.g, BORDER_DARK.g, frameProgress);
           const borderB = interpolate(BORDER_LIGHT.b, BORDER_DARK.b, frameProgress);
@@ -269,6 +265,9 @@ const { title, subtitle, filepath } = Astro.props;
 
           document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
           document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
+          document.documentElement.style.setProperty('--color-subtitle', `rgb(${subtitleR}, ${subtitleG}, ${subtitleB})`);
+          document.documentElement.style.setProperty('--color-muted', `rgb(${mutedR}, ${mutedG}, ${mutedB})`);
+          document.documentElement.style.setProperty('--color-divider', `rgb(${dividerR}, ${dividerG}, ${dividerB})`);
           document.documentElement.style.setProperty('--color-border', `rgb(${borderR}, ${borderG}, ${borderB})`);
           document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
         }
@@ -316,6 +315,12 @@ const { title, subtitle, filepath } = Astro.props;
       declare const BG_DARK: { r: number; g: number; b: number };
       declare const FG_LIGHT: { r: number; g: number; b: number };
       declare const FG_DARK: { r: number; g: number; b: number };
+      declare const SUBTITLE_LIGHT: { r: number; g: number; b: number };
+      declare const SUBTITLE_DARK: { r: number; g: number; b: number };
+      declare const MUTED_LIGHT: { r: number; g: number; b: number };
+      declare const MUTED_DARK: { r: number; g: number; b: number };
+      declare const DIVIDER_LIGHT: { r: number; g: number; b: number };
+      declare const DIVIDER_DARK: { r: number; g: number; b: number };
       declare const BORDER_LIGHT: { r: number; g: number; b: number };
       declare const BORDER_DARK: { r: number; g: number; b: number };
       declare const LINK_LIGHT: { r: number; g: number; b: number };
@@ -404,6 +409,15 @@ const { title, subtitle, filepath } = Astro.props;
             const fgR = interpolate(FG_LIGHT.r, FG_DARK.r, frameProgress);
             const fgG = interpolate(FG_LIGHT.g, FG_DARK.g, frameProgress);
             const fgB = interpolate(FG_LIGHT.b, FG_DARK.b, frameProgress);
+            const subtitleR = interpolate(SUBTITLE_LIGHT.r, SUBTITLE_DARK.r, frameProgress);
+            const subtitleG = interpolate(SUBTITLE_LIGHT.g, SUBTITLE_DARK.g, frameProgress);
+            const subtitleB = interpolate(SUBTITLE_LIGHT.b, SUBTITLE_DARK.b, frameProgress);
+            const mutedR = interpolate(MUTED_LIGHT.r, MUTED_DARK.r, frameProgress);
+            const mutedG = interpolate(MUTED_LIGHT.g, MUTED_DARK.g, frameProgress);
+            const mutedB = interpolate(MUTED_LIGHT.b, MUTED_DARK.b, frameProgress);
+            const dividerR = interpolate(DIVIDER_LIGHT.r, DIVIDER_DARK.r, frameProgress);
+            const dividerG = interpolate(DIVIDER_LIGHT.g, DIVIDER_DARK.g, frameProgress);
+            const dividerB = interpolate(DIVIDER_LIGHT.b, DIVIDER_DARK.b, frameProgress);
             const borderR = interpolate(BORDER_LIGHT.r, BORDER_DARK.r, frameProgress);
             const borderG = interpolate(BORDER_LIGHT.g, BORDER_DARK.g, frameProgress);
             const borderB = interpolate(BORDER_LIGHT.b, BORDER_DARK.b, frameProgress);
@@ -413,6 +427,9 @@ const { title, subtitle, filepath } = Astro.props;
 
             document.documentElement.style.setProperty('--color-bg', `rgb(${bgR}, ${bgG}, ${bgB})`);
             document.documentElement.style.setProperty('--color-fg', `rgb(${fgR}, ${fgG}, ${fgB})`);
+            document.documentElement.style.setProperty('--color-subtitle', `rgb(${subtitleR}, ${subtitleG}, ${subtitleB})`);
+            document.documentElement.style.setProperty('--color-muted', `rgb(${mutedR}, ${mutedG}, ${mutedB})`);
+            document.documentElement.style.setProperty('--color-divider', `rgb(${dividerR}, ${dividerG}, ${dividerB})`);
             document.documentElement.style.setProperty('--color-border', `rgb(${borderR}, ${borderG}, ${borderB})`);
             document.documentElement.style.setProperty('--color-link', `rgb(${linkR}, ${linkG}, ${linkB})`);
 

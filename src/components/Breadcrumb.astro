@@ -58,7 +58,7 @@ const isHome = filepath === "~/";
   .breadcrumb {
     position: fixed;
     top: 32px;
-    left: calc(var(--layout-margin) + 36px);
+    left: calc(var(--layout-margin) + var(--content-inline-padding));
     font-size: 1rem;
     color: var(--color-fg);
     z-index: 100;
@@ -95,12 +95,6 @@ const isHome = filepath === "~/";
   .symbol {
     font-size: 1.0rem;
     vertical-align: baseline;
-  }
-
-  @media (max-width: 900px) {
-    .breadcrumb {
-      left: calc(var(--layout-margin) + 12px);
-    }
   }
 
 </style>

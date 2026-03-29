@@ -18,10 +18,16 @@ function hexToRgb(hex) {
 }
 
 const style = getComputedStyle(document.documentElement);
-const BG_LIGHT = hexToRgb(style.getPropertyValue('--color-white').trim());
-const BG_DARK = hexToRgb(style.getPropertyValue('--color-black').trim());
+const BG_LIGHT = hexToRgb(style.getPropertyValue('--color-background-light').trim());
+const BG_DARK = hexToRgb(style.getPropertyValue('--color-background-dark').trim());
 const FG_LIGHT = hexToRgb(style.getPropertyValue('--color-fg-light').trim());
 const FG_DARK = hexToRgb(style.getPropertyValue('--color-fg-dark').trim());
+const SUBTITLE_LIGHT = hexToRgb(style.getPropertyValue('--color-subtitle-light').trim());
+const SUBTITLE_DARK = hexToRgb(style.getPropertyValue('--color-subtitle-dark').trim());
+const MUTED_LIGHT = hexToRgb(style.getPropertyValue('--color-muted-light').trim());
+const MUTED_DARK = hexToRgb(style.getPropertyValue('--color-muted-dark').trim());
+const DIVIDER_LIGHT = hexToRgb(style.getPropertyValue('--color-divider-light').trim());
+const DIVIDER_DARK = hexToRgb(style.getPropertyValue('--color-divider-dark').trim());
 const BORDER_LIGHT = hexToRgb(style.getPropertyValue('--color-border-light').trim());
 const BORDER_DARK = hexToRgb(style.getPropertyValue('--color-border-dark').trim());
 const LINK_LIGHT = hexToRgb(style.getPropertyValue('--color-link-light').trim());

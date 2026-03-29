@@ -92,8 +92,39 @@ const slug = Astro.url.pathname.split('/').filter(Boolean).pop() || '';
   }
 
   .blog-post :global(.footnotes) {
-    border-top: 1px solid var(--color-fg);
+    border-top: 1px solid var(--color-divider);
+    color: var(--color-muted);
     margin-top: 1.5em;
     padding-top: 0.75em;
   }
 </style>
+
+<script>
+  function initFootnoteSmoothScroll() {
+    const blogPost = document.querySelector('.blog-post');
+    if (!(blogPost instanceof HTMLElement)) return;
+    if (blogPost.dataset.footnoteSmoothInit === '1') return;
+    blogPost.dataset.footnoteSmoothInit = '1';
+
+    blogPost.addEventListener('click', (event) => {
+      const clicked = event.target;
+      if (!(clicked instanceof Element)) return;
+
+      const link = clicked.closest('a[data-footnote-ref], a[data-footnote-backref], a[href^="#fn"], a[href^="#fnref"]');
+      if (!(link instanceof HTMLAnchorElement)) return;
+
+      const targetHash = link.hash;
+      if (!targetHash) return;
+      const targetId = decodeURIComponent(targetHash.slice(1));
+      const targetElement = document.getElementById(targetId);
+      if (!(targetElement instanceof HTMLElement)) return;
+
+      event.preventDefault();
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.pushState(null, '', targetHash);
+    });
+  }
+
+  initFootnoteSmoothScroll();
+  document.addEventListener('astro:after-swap', initFootnoteSmoothScroll);
+</script>
