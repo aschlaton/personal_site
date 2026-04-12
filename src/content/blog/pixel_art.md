@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/BlogPostLayout.astro
 title: "pixel art"
 date: "2025-10-5"
 description: "👾🎨"

@@ -1,68 +1,93 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
 import BlogPostCard from "../../components/BlogPostCard.astro";
-
-// for automatic generation of blog pages and previews
-
+import { getCollection, render } from "astro:content";
+import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
 
 export async function getStaticPaths() {
-
   const POSTS_PER_PAGE = 4;
-  
-  const allPostFiles = import.meta.glob('./*.md', { eager: true });
-
-  const allPosts = Object.entries(allPostFiles)
-    .map(([path, post]: [string, any]) => ({
-      title: post.frontmatter.title,
-      date: post.frontmatter.date,
-      slug: path.split('/').pop()?.replace('.md', '') || '',
-      description: post.frontmatter.description,
-    }))
-    .sort((a, b) => b.date.localeCompare(a.date)); // Lexicographic sort (YYYY-MM-DD format)
+  const getPostSlug = (post) => String(post.slug ?? post.id).replace(/\.md$/, "");
+  const allPosts = (await getCollection("blog")).sort((a, b) =>
+    b.data.date.localeCompare(a.data.date)
+  );
 
   const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
-
-  return Array.from({ length: totalPages }, (_, i) => {
+  const listingPaths = Array.from({ length: totalPages }, (_, i) => {
     const pageNum = i + 1;
     const start = i * POSTS_PER_PAGE;
-    const posts = allPosts.slice(start, start + POSTS_PER_PAGE);
+    const posts = allPosts.slice(start, start + POSTS_PER_PAGE).map((post) => ({
+      title: post.data.title,
+      date: post.data.date,
+      slug: getPostSlug(post),
+      description: post.data.description,
+    }));
 
     return {
       params: { page: pageNum.toString() },
       props: {
+        kind: "listing",
         posts,
         currentPage: pageNum,
         totalPages,
       },
     };
   });
+
+  const postPaths = allPosts.map((post) => ({
+    params: { page: getPostSlug(post) },
+    props: {
+      kind: "post",
+      post,
+    },
+  }));
+
+  return [...listingPaths, ...postPaths];
 }
 
-const { posts, currentPage, totalPages } = Astro.props;
+const props = Astro.props;
+const isPostPage = props.kind === "post";
+const isListingPage = props.kind === "listing";
+const post = isPostPage ? props.post : null;
+const currentPage = isListingPage ? props.currentPage : 1;
+const totalPages = isListingPage ? props.totalPages : 1;
+const posts = isListingPage ? props.posts : [];
+const renderedPost = post ? await render(post) : null;
 ---
 
-<PageLayout title="Blog" subtitle="thoughts" filepath="~/blog">
-  <div class="blog-content">
-    {posts.map((post) => (
-      <BlogPostCard
-        title={post.title}
-        date={post.date}
-        slug={post.slug}
-        description={post.description}
-      />
-    ))}
-  </div>
+{isPostPage && post && renderedPost ? (
+  <BlogPostLayout
+    frontmatter={{
+      title: post.data.title,
+      date: post.data.date,
+      description: post.data.description,
+    }}
+  >
+    <renderedPost.Content />
+  </BlogPostLayout>
+) : (
+  <PageLayout title="Blog" subtitle="thoughts" filepath="~/blog">
+    <div class="blog-content">
+      {posts.map((blogPost) => (
+        <BlogPostCard
+          title={blogPost.title}
+          date={blogPost.date}
+          slug={blogPost.slug}
+          description={blogPost.description}
+        />
+      ))}
+    </div>
 
-  <div class="pagination">
-    {currentPage > 1 && (
-      <a href={`/blog/${currentPage - 1}`} class="page-link">← Previous</a>
-    )}
-    <span class="page-info">Page {currentPage} of {totalPages}</span>
-    {currentPage < totalPages && (
-      <a href={`/blog/${currentPage + 1}`} class="page-link">Next →</a>
-    )}
-  </div>
-</PageLayout>
+    <div class="pagination">
+      {currentPage > 1 && (
+        <a href={`/blog/${currentPage - 1}`} class="page-link">← Previous</a>
+      )}
+      <span class="page-info">Page {currentPage} of {totalPages}</span>
+      {currentPage < totalPages && (
+        <a href={`/blog/${currentPage + 1}`} class="page-link">Next →</a>
+      )}
+    </div>
+  </PageLayout>
+)}
 
 <style>
   .blog-content {

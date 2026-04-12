@@ -1,5 +1,4 @@
 ---
-layout: ../../layouts/BlogPostLayout.astro
 title: "March Madness"
 date: "2026-03-22"
 description: "⛹️"

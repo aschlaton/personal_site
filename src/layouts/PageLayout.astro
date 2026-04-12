@@ -23,6 +23,7 @@ const { title, subtitle, filepath } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>{title}</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preload" as="image" href="/assets/sprite_sheet.png" />
     <ClientRouter fallback="none" />
     <ColorVariables />
     <script is:inline set:html={constants}></script>
